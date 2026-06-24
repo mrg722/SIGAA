@@ -1,0 +1,42 @@
+{
+  "proyecto": "SIGAA",
+  "version": "1.9",
+  "tipo": "prototipo funcional web responsivo",
+  "perfiles": [
+    "viajero",
+    "funcionario",
+    "administrador"
+  ],
+  "mejoras_version": [
+    "corrección integral de botones, navegación y lógica de formularios",
+    "login overlay independiente que no usa una vista interna",
+    "corrección de cambio de perfil, reinicio y menú hamburguesa",
+    "refinamiento visual general de paneles, KPIs y tarjetas",
+    "más nacionalidades en registro de viajero",
+    "selector de perfil con botón Iniciar y cambio de usuario",
+    "login overlay full-screen que oculta la plataforma antes de iniciar",
+    "pantalla inicial con selección de perfil",
+    "menú lateral colapsable con botón hamburguesa",
+    "pantalla de acceso centrada con selección de perfil",
+    "pantalla de selección previa con botón Iniciar y cambiar usuario",
+    "vista viajero separada de vista funcionario",
+    "panel administrador diferenciado de panel funcionario",
+    "eliminación de textos académicos del panel de usuario",
+    "eliminación de secciones no operativas dentro del prototipo",
+    "seguimiento de trámite con estados operativos",
+    "panel funcionario con solicitudes, expediente completo, revisión, validaciones y resolución",
+    "expediente completo del viajero visible para funcionario",
+    "perfil administrador separado de la revisión operativa",
+    "vista técnica de calidad solo para administrador"
+  ],
+  "tecnologias": [
+    "HTML5",
+    "CSS3",
+    "JavaScript"
+  ],
+  "normas_referenciales": [
+    "ISO 9126",
+    "ISO 25000",
+    "ISO 25010"
+  ]
+}

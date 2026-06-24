@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SIGAA | Prototipo funcional web</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="login-active">
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div id="loginOverlay" class="loginOverlay" aria-label="Inicio de sesión SIGAA">
+    <article class="loginCard">
+      <span class="pill">Acceso previo · Plataforma SIGAA</span>
+      <div class="authAvatar" id="welcomeAvatar">👤</div>
+      <h1>Bienvenido a SIGAA</h1>
+      <p class="muted authLead">Seleccione el perfil que usará la demo. La plataforma se mantiene oculta hasta presionar <b>Iniciar</b>.</p>
+      <div class="selectedRoleBox authSelected">
+        <b>Perfil seleccionado</b>
+        <span id="selectedRoleText">Viajero</span>
+      </div>
+      <div class="buttons authButtons">
+        <button class="ghost" type="button" id="toggleRolePicker">Cambiar usuario</button>
+        <button class="primary" type="button" id="startRole">Iniciar</button>
+      </div>
+      <div class="rolePicker hidden" id="rolePicker">
+        <button class="roleOption selected" type="button" data-select-role="viajero">
+          <span>👤</span>
+          <div><b>Viajero</b><small>Registra trámite, documentos y comprobante QR.</small></div>
+        </button>
+        <button class="roleOption" type="button" data-select-role="funcionario">
+          <span>🛂</span>
+          <div><b>Funcionario</b><small>Revisa, valida y resuelve solicitudes.</small></div>
+        </button>
+        <button class="roleOption" type="button" data-select-role="admin">
+          <span>📊</span>
+          <div><b>Administrador</b><small>Supervisa reportes, métricas y calidad.</small></div>
+        </button>
+      </div>
+    </article>
+  </div>
+
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <div class="brand">
+      <button class="hamburger" id="toggleMenu" aria-label="Mostrar u ocultar menú">☰</button>
+      <div class="logo">SG</div>
+      <div class="brandText">
+        <h1>SIGAA</h1>
+        <p>Gestión aduanera web</p>
+      </div>
+    </div>
+
+    <div class="userbox">
+      <div class="avatar" id="avatar">--</div>
+      <div class="userText">
+        <b id="uName">Sin perfil seleccionado</b>
+        <small id="uRole">Seleccione un perfil y presione Iniciar</small>
+      </div>
+    </div>
+
+    <nav id="nav" aria-label="Menú de módulos"></nav>
+
+    <footer>
+      <span></span>
+      <p>Prototipo académico v1.9</p>
+    </footer>
+  </aside>
+
+  <main id="main">
+    <header class="top">
+      <div>
+        <p>RQY1102 · Evaluación Parcial 3</p>
+        <h2 id="title">Inicio SIGAA</h2>
+      </div>
+      <div class="actions">
+        <button class="ghost" type="button" id="changeRole">Cambiar perfil</button>
+        <button class="ghost" type="button" id="reset">Reiniciar demo</button>
+        <button class="primary small" type="button" data-go="qr">Ver comprobante QR</button>
+      </div>
+    </header>
+
+    <section class="progressBox hidden" id="progressBox">
+      <div class="progressText">
+        <b>Seguimiento del trámite</b>
+        <span id="progressLabel">Etapa actual: solicitud registrada</span>
+      </div>
+      <div class="progressTrack"><div id="progressBar"></div></div>
+      <div class="progressSteps" id="progressSteps"></div>
+    </section>
+
+    <section id="dashboardViajero" class="view">
+      <div class="heading">
+        <div>
+          <p>Vista viajero</p>
+          <h3>Panel de solicitud SIGAA</h3>
+        </div>
+        <span class="badge ok" id="estadoBadge">Solicitud registrada</span>
+      </div>
+
+      <div class="trackingCard">
+        <div>
+          <p>Código de solicitud</p>
+          <h4>SIGAA-2026-0001</h4>
+          <span>Comprobante asociado al viajero.</span>
+        </div>
+        <div>
+          <p>Estado del trámite</p>
+          <h4 id="estadoGrande">Solicitud registrada</h4>
+          <span id="siguientePaso">Próximo paso: completar datos del viajero.</span>
+        </div>
+        <div>
+          <p>Documentos</p>
+          <h4 id="docCount">1/3</h4>
+          <span>Expediente digital en preparación.</span>
+        </div>
+      </div>
+
+      <div class="steps" id="travelerSteps"></div>
+
+      <div class="grid2">
+        <article class="panel">
+          <h4>Próximas acciones</h4>
+          <ul class="cleanList">
+            <li>Completar registro de viajero.</li>
+            <li>Declarar vehículo o continuar sin vehículo.</li>
+            <li>Registrar menor de edad si corresponde.</li>
+            <li>Cargar documentos obligatorios.</li>
+            <li>Generar comprobante QR para revisión.</li>
+          </ul>
+          <button type="button" class="primary" data-go="viajero">Continuar trámite</button>
+        </article>
+        <article class="panel noticePanel">
+          <h4>Información del servicio</h4>
+          <p>Esta plataforma web permite preparar el trámite antes del control presencial, reduciendo errores de carga y entregando seguimiento del estado de la solicitud.</p>
+          <div class="miniCards">
+            <span>Web responsiva</span><span>Sin instalación</span><span>Roles separados</span><span>QR de control</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="viajero" class="view">
+      <form class="card form" id="fVia" novalidate>
+        <div class="heading">
+          <div><p>Módulo viajero</p><h3>Registro previo de persona</h3></div>
+          <span class="badge">Datos obligatorios</span>
+        </div>
+        <div class="helpBox"><b>Instrucción</b><span>Complete los datos básicos del viajero. Esta información quedará asociada al comprobante QR.</span></div>
+        <div class="formGrid">
+          <label>Nombre completo<input required name="nombre" value="Martín Reyes Guajardo"></label>
+          <label>Documento / Pasaporte<input required name="doc" value="19.876.543-2"></label>
+          <label>Nacionalidad<select name="nac"><option>Chile</option><option>Argentina</option><option>Brasil</option><option>Perú</option><option>Bolivia</option><option>Uruguay</option><option>Paraguay</option><option>Colombia</option><option>Venezuela</option><option>Ecuador</option><option>México</option><option>Estados Unidos</option><option>Canadá</option><option>España</option><option>Francia</option><option>Alemania</option><option>Italia</option><option>China</option><option>Japón</option><option>Corea del Sur</option><option>Australia</option><option>Otro</option></select></label>
+          <label>Correo<input required type="email" name="correo" value="martin.reyes@email.cl"></label>
+          <label>Teléfono<input name="fono" value="+56 9 8765 4321"></label>
+          <label>Tipo de tránsito<select name="transito"><option>Salida temporal desde Chile</option><option>Ingreso temporal a Chile</option></select></label>
+        </div>
+        <div id="viaError" class="errorBox hidden">Debe completar nombre, documento y correo antes de continuar.</div>
+        <div class="buttons"><button type="button" class="ghost" data-go="dashboardViajero">Volver</button><button class="primary">Guardar y continuar</button></div>
+      </form>
+    </section>
+
+    <section id="vehiculo" class="view">
+      <form class="card form" id="fVeh" novalidate>
+        <div class="heading"><div><p>Documentación vehicular</p><h3>Declaración de vehículo</h3></div><span class="badge">Permiso temporal</span></div>
+        <div class="helpBox"><b>Instrucción</b><span>Registre el vehículo asociado al cruce. El sistema simula reglas de plazo según tipo de permiso.</span></div>
+        <div class="formGrid">
+          <label>Patente<input required name="patente" value="ABCD-12"></label>
+          <label>Marca<input required name="marca" value="Chevrolet"></label>
+          <label>Modelo<input required name="modelo" value="Sail Classic"></label>
+          <label>Año<input type="number" name="anio" value="2016"></label>
+          <label>Tipo de permiso<select id="permiso"><option value="180">Particular · 180 días</option><option value="90">Diplomático · 90 días</option></select></label>
+          <label>País destino/origen<select><option>Argentina</option><option>Chile</option></select></label>
+        </div>
+        <div class="notice"><b>Regla aplicada:</b> el permiso seleccionado permite una permanencia temporal de <span id="diasPermiso">180</span> días.</div>
+        <div id="vehError" class="errorBox hidden">Debe completar patente, marca y modelo.</div>
+        <div class="buttons"><button type="button" class="ghost" data-go="viajero">Volver</button><button class="primary">Guardar vehículo</button></div>
+      </form>
+    </section>
+
+    <section id="menor" class="view">
+      <form class="card form" id="fMenor" novalidate>
+        <div class="heading"><div><p>Control documental</p><h3>Registro de menor de edad</h3></div><span class="badge">Autorización</span></div>
+        <div class="formGrid">
+          <label>¿Viaja con menor?<select id="viajaMenor"><option>Sí</option><option>No</option></select></label>
+          <label>Nombre del menor<input name="menorNombre" value="Sofía Reyes"></label>
+          <label>Documento del menor<input name="menorDoc" value="24.111.222-3"></label>
+          <label>Relación<select><option>Padre/Madre</option><option>Tutor legal</option><option>Otro autorizado</option></select></label>
+          <label>Autorización notarial<select><option>Adjunta</option><option>Pendiente</option></select></label>
+          <label>Observación<input value="Autorización vigente para salida temporal."></label>
+        </div>
+        <div id="menorError" class="errorBox hidden">Si viaja con menor, debe registrar nombre, documento y autorización.</div>
+        <div class="buttons"><button type="button" class="ghost" data-go="vehiculo">Volver</button><button class="primary">Guardar menor</button></div>
+      </form>
+    </section>
+
+    <section id="sag" class="view">
+      <form class="card form" id="fSag">
+        <div class="heading"><div><p>Declaración sanitaria</p><h3>Declaración SAG</h3></div><span class="badge warn">Revisión sanitaria</span></div>
+        <div class="options">
+          <label><input type="checkbox"> Productos de origen animal</label>
+          <label><input type="checkbox" checked> Alimentos procesados</label>
+          <label><input type="checkbox"> Productos vegetales</label>
+          <label><input type="checkbox"> Mascota</label>
+        </div>
+        <label>Detalle de declaración<textarea>Alimentos sellados para consumo personal.</textarea></label>
+        <div class="notice flex"><span>Estado SAG simulado: <b id="sagState">Pendiente de consulta</b></span><button type="button" class="ghost" id="sagCheck">Consultar SAG</button></div>
+        <div class="buttons"><button type="button" class="ghost" data-go="menor">Volver</button><button class="primary">Guardar declaración SAG</button></div>
+      </form>
+    </section>
+
+    <section id="docs" class="view">
+      <div class="card">
+        <div class="heading"><div><p>Expediente digital</p><h3>Carga y estado de documentos</h3></div><span class="badge">Repositorio documental</span></div>
+        <div class="docList" id="docList">
+          <div class="doc ok"><span>PDF</span><div><b>Documento identidad.pdf</b><small>Cargado correctamente.</small></div><strong>Aprobado</strong></div>
+          <div class="doc warn"><span>PDF</span><div><b>Autorización menor.pdf</b><small>Requiere revisión funcionaria.</small></div><strong>En revisión</strong></div>
+          <div class="doc"><span>PDF</span><div><b>Permiso vehículo.pdf</b><small>Pendiente de carga.</small></div><strong>Pendiente</strong></div>
+        </div>
+        <input type="file" id="file" class="hidden" multiple>
+        <div class="buttons"><button class="ghost" type="button" id="up">Adjuntar documento</button><button class="ghost danger" type="button" id="rejectDoc">Simular documento observado</button><button class="primary" type="button" id="confirmDocs">Confirmar documentos</button></div>
+      </div>
+    </section>
+
+    <section id="qr" class="view">
+      <div class="card qrCard">
+        <div>
+          <p>Comprobante digital</p>
+          <h3>Código QR de solicitud</h3>
+          <p class="muted">El comprobante se presenta en el control fronterizo para que el funcionario consulte la solicitud.</p>
+          <div class="ticket">
+            <span>Solicitud</span><b>SIGAA-2026-0001</b>
+            <span>Viajero</span><b>Martín Reyes Guajardo</b>
+            <span>Estado</span><b id="qrStatus">Pendiente de generación</b>
+          </div>
+          <button class="primary" type="button" id="genQr">Generar QR</button>
+        </div>
+        <div class="qr" aria-label="QR simulado"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section id="estado" class="view">
+      <div class="heading"><div><p>Seguimiento</p><h3>Estado de solicitud</h3></div><span class="badge ok">Trazabilidad</span></div>
+      <div class="timelineBox" id="travelerTimeline">
+        <p><b>Solicitud registrada:</b> trámite iniciado por el viajero.</p>
+        <p><b>Datos personales:</b> pendiente de confirmación.</p>
+      </div>
+    </section>
+
+    <section id="dashboardFuncionario" class="view">
+      <div class="heading"><div><p>Vista funcionario</p><h3>Panel de revisión fronteriza</h3></div><span class="badge warn">Solicitudes pendientes</span></div>
+      <div class="kpis">
+        <article><span>Pendientes</span><b>8</b><small>Solicitudes por revisar</small></article>
+        <article><span>Observadas</span><b id="obsKpi">2</b><small>Documentos con corrección</small></article>
+        <article><span>Aprobadas</span><b>14</b><small>Durante la jornada</small></article>
+        <article><span>SAG</span><b>3</b><small>Validaciones pendientes</small></article>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Código</th><th>Viajero</th><th>Estado</th><th>Documentos</th><th>Acción</th></tr></thead>
+          <tbody>
+            <tr><td>SIGAA-2026-0001</td><td>Martín Reyes</td><td id="rowEstado">En preparación</td><td id="rowDocs">En revisión</td><td><button type="button" class="small primary" data-go="expedienteViajero">Ver expediente</button></td></tr>
+            <tr><td>SIGAA-2026-0002</td><td>Ana Pérez</td><td>Validación SAG</td><td>Aprobados</td><td><button class="small ghost">Consultar</button></td></tr>
+            <tr><td>SIGAA-2026-0003</td><td>Carlos Soto</td><td>Observado</td><td>Corregir PDF</td><td><button class="small ghost">Consultar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid2">
+        <article class="panel">
+          <h4>Alertas del expediente actual</h4>
+          <ul class="cleanList" id="funcAlerts">
+            <li>El expediente aún no tiene observaciones registradas.</li>
+          </ul>
+        </article>
+        <article class="panel noticePanel">
+          <h4>Criterios de revisión</h4>
+          <p>El funcionario debe revisar si faltan documentos, si existe observación previa y si las validaciones externas se encuentran pendientes antes de aprobar el tránsito.</p>
+          <div class="miniCards">
+            <span>Control documental</span><span>Validación PDI/SAG</span><span>Resolución final</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="expedienteViajero" class="view">
+      <div class="heading"><div><p>Vista funcionario</p><h3>Expediente del viajero</h3></div><span class="badge">Consulta integral</span></div>
+      <div class="grid2">
+        <article class="panel">
+          <h4>Datos registrados por el viajero</h4>
+          <div class="tableWrap compactTable">
+            <table>
+              <tbody>
+                <tr><th>Solicitud</th><td>SIGAA-2026-0001</td></tr>
+                <tr><th>Nombre</th><td id="expNombre">Martín Reyes Guajardo</td></tr>
+                <tr><th>Documento</th><td id="expDocumento">19.876.543-2</td></tr>
+                <tr><th>Nacionalidad</th><td id="expNacionalidad">Chile</td></tr>
+                <tr><th>Tipo de tránsito</th><td id="expTransito">Salida temporal desde Chile</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+        <article class="panel">
+          <h4>Declaraciones asociadas</h4>
+          <div class="tableWrap compactTable">
+            <table>
+              <tbody>
+                <tr><th>Vehículo</th><td id="expVehiculo">ABCD-12 · Chevrolet Sail Classic</td></tr>
+                <tr><th>Permiso</th><td id="expPermiso">Particular · 180 días</td></tr>
+                <tr><th>Menor de edad</th><td id="expMenor">Sofía Reyes · Autorización adjunta</td></tr>
+                <tr><th>Declaración SAG</th><td id="expSag">Sin observaciones críticas</td></tr>
+                <tr><th>QR</th><td id="expQr">Pendiente de generación</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+      <div class="grid2">
+        <article class="panel">
+          <h4>Checklist funcionario</h4>
+          <ul class="cleanList" id="funcChecklist">
+            <li>Verificar identidad del viajero.</li>
+            <li>Comparar vehículo declarado con permiso temporal.</li>
+            <li>Revisar autorización de menor si corresponde.</li>
+            <li>Confirmar declaración SAG y documentos adjuntos.</li>
+            <li>Generar observación o continuar a validaciones.</li>
+          </ul>
+        </article>
+        <article class="panel noticePanel">
+          <h4>Acción recomendada</h4>
+          <p id="funcNextAction">Revise el expediente documental antes de ejecutar las validaciones simuladas.</p>
+          <div class="buttons"><button class="ghost" type="button" data-go="dashboardFuncionario">Volver al panel</button><button class="primary" type="button" data-go="revisionDocs">Ir a revisión documental</button></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="revisionDocs" class="view">
+      <div class="card">
+        <div class="heading"><div><p>Control funcionario</p><h3>Revisión documental</h3></div><span class="badge">Expediente SIGAA-2026-0001</span></div>
+        <p class="muted">El funcionario revisa los documentos cargados por el viajero y puede aprobarlos u observarlos antes de la resolución final.</p>
+        <div class="docSummary">
+          <div><b>Documento identidad</b><span class="okText">Aprobado</span></div>
+          <div><b>Permiso vehículo</b><span id="permisoState" class="warnText">En revisión</span></div>
+          <div><b>Autorización menor</b><span class="warnText">Observación leve</span></div>
+        </div>
+        <div class="buttons"><button class="ghost danger" type="button" id="markObserved">Marcar observado</button><button class="primary" type="button" id="markDocsOk">Aprobar documentos</button></div>
+      </div>
+    </section>
+
+    <section id="validaciones" class="view">
+      <div class="card">
+        <div class="heading"><div><p>Validaciones simuladas</p><h3>Consulta PDI / SAG / Aduanas</h3></div><span class="badge warn">Sin conexión real</span></div>
+        <p class="muted">Esta sección representa la integración futura con organismos externos. En el prototipo, la validación se simula para demostrar el flujo.</p>
+        <div class="valids">
+          <div id="pdi"><span>PDI</span><b>Pendiente</b></div>
+          <div id="sagv"><span>SAG</span><b>Pendiente</b></div>
+          <div id="adu"><span>Aduanas</span><b>Pendiente</b></div>
+        </div>
+        <button class="primary" type="button" id="validar">Ejecutar validaciones</button>
+      </div>
+    </section>
+
+    <section id="resolucion" class="view">
+      <div class="card">
+        <div class="heading"><div><p>Resolución</p><h3>Aprobación u observación del trámite</h3></div><span class="badge">Decisión funcionaria</span></div>
+        <div class="resolutionBox">
+          <h4 id="resolutionState">Trámite pendiente de resolución</h4>
+          <p id="resolutionMsg">Ejecute las validaciones y revise documentos antes de aprobar.</p>
+        </div>
+        <div class="buttons"><button class="ghost danger" type="button" id="observar">Observar trámite</button><button class="primary" type="button" id="aprobar">Aprobar tránsito</button></div>
+      </div>
+    </section>
+
+    <section id="historial" class="view">
+      <div class="heading"><div><p>Trazabilidad</p><h3>Historial de acciones</h3></div><span class="badge ok">Registro de eventos</span></div>
+      <div class="timelineBox" id="timeline"></div>
+    </section>
+
+    <section id="reportes" class="view">
+      <div class="heading"><div><p>Administración</p><h3>Reportes de operación</h3></div><span class="badge">Indicadores</span></div>
+      <div class="reports">
+        <article><h4>Solicitudes por estado</h4><div class="bars"><span style="--w:70%">Aprobadas</span><span style="--w:45%">En revisión</span><span style="--w:20%">Observadas</span></div></article>
+        <article><h4>Documentos observados</h4><div class="donut">18%</div><p class="muted">Porcentaje simulado para evidenciar reportabilidad.</p></article>
+        <article><h4>Tiempos de atención</h4><p class="big">-35%</p><span>Reducción estimada por pre-registro y QR.</span></article>
+      </div>
+      <button class="primary" type="button" id="export">Simular exportación PDF/Excel</button>
+    </section>
+
+    <section id="dashboardAdmin" class="view">
+      <div class="heading"><div><p>Vista administrador</p><h3>Panel de supervisión SIGAA</h3></div><span class="badge ok">Monitoreo general</span></div>
+      <div class="kpis">
+        <article><span>Solicitudes totales</span><b>22</b><small>Procesadas durante la jornada</small></article>
+        <article><span>Aprobadas</span><b>14</b><small>Tránsitos cerrados correctamente</small></article>
+        <article><span>Observadas</span><b id="adminObsKpi">2</b><small>Requieren corrección del viajero</small></article>
+        <article><span>Disponibilidad</span><b>99%</b><small>Servicio web operativo</small></article>
+      </div>
+      <div class="grid2">
+        <article class="panel">
+          <h4>Resumen por perfil</h4>
+          <ul class="cleanList">
+            <li><b>Viajero:</b> registra datos, declaraciones, documentos y comprobante QR.</li>
+            <li><b>Funcionario:</b> revisa el expediente, ejecuta validaciones y resuelve el trámite.</li>
+            <li><b>Administrador:</b> supervisa indicadores, permisos, reportes, historial y calidad del prototipo.</li>
+          </ul>
+        </article>
+        <article class="panel">
+          <h4>Incidencias y faltantes</h4>
+          <ul class="cleanList" id="adminAlerts">
+            <li>Sin incidencias críticas registradas.</li>
+          </ul>
+        </article>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Módulo</th><th>Estado</th><th>Observación</th></tr></thead>
+          <tbody>
+            <tr><td>Acceso por perfil</td><td>Activo</td><td>Selección previa antes del ingreso al sistema.</td></tr>
+            <tr><td>Expediente digital</td><td id="adminDocsState">En curso</td><td>Revisión documental asociada a la solicitud actual.</td></tr>
+            <tr><td>Validaciones</td><td id="adminValState">Pendiente</td><td>Se ejecutan desde la vista funcionaria.</td></tr>
+            <tr><td>Resolución</td><td id="adminResState">Pendiente</td><td>Estado final del trámite.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="usuariosSistema" class="view adminOnly">
+      <div class="heading"><div><p>Vista administrador</p><h3>Gestión de perfiles y permisos</h3></div><span class="badge ok">Supervisión de accesos</span></div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Perfil</th><th>Permisos principales</th><th>Restricción</th></tr></thead>
+          <tbody>
+            <tr><td>Viajero</td><td>Registrar datos, declaraciones, documentos y QR.</td><td>No puede aprobar ni observar trámites.</td></tr>
+            <tr><td>Funcionario</td><td>Consultar expediente, revisar documentos, ejecutar validaciones y resolver.</td><td>No administra calidad ni configuración del prototipo.</td></tr>
+            <tr><td>Administrador</td><td>Supervisar indicadores, reportes, historial global y calidad técnica.</td><td>No modifica el trámite operativo del viajero.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid2">
+        <article class="panel">
+          <h4>Lógica del administrador</h4>
+          <p>El administrador no reemplaza al funcionario. Su función es observar el estado global de la plataforma, revisar métricas, trazabilidad, perfiles y evidencias de calidad.</p>
+        </article>
+        <article class="panel">
+          <h4>Separación de responsabilidades</h4>
+          <ul class="cleanList">
+            <li>Viajero: crea y completa el expediente.</li>
+            <li>Funcionario: revisa y decide sobre el expediente.</li>
+            <li>Administrador: supervisa operación, reportes y calidad.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="calidad" class="view adminOnly">
+      <div class="heading"><div><p>Vista técnica</p><h3>Calidad del prototipo</h3></div><span class="badge ok">Solo administrador</span></div>
+      <div class="quality">
+        <article><h4>ISO 9126</h4><p>Se usa como base para observar atributos como funcionalidad, usabilidad, eficiencia, mantenibilidad y portabilidad.</p></article>
+        <article><h4>ISO 25000</h4><p>Guía el enfoque de calidad del producto y la documentación de pruebas mediante casos y resultados observables.</p></article>
+        <article><h4>ISO 25010</h4><p>Permite asociar funciones del prototipo a atributos de calidad y satisfacción del usuario.</p></article>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Atributo</th><th>Evidencia en SIGAA</th></tr></thead>
+          <tbody>
+            <tr><td>Usabilidad</td><td>Flujo guiado, ayudas, menú colapsable y navegación por módulos.</td></tr>
+            <tr><td>Seguridad</td><td>Separación de perfiles viajero, funcionario y administrador.</td></tr>
+            <tr><td>Eficiencia</td><td>Pre-registro, carga documental y comprobante QR.</td></tr>
+            <tr><td>Trazabilidad</td><td>Estados, historial de acciones y resolución funcionaria.</td></tr>
+            <tr><td>Portabilidad</td><td>Prototipo web ejecutable en navegador sin instalación.</td></tr>
+            <tr><td>Mantenibilidad</td><td>Separación de archivos HTML, CSS y JavaScript.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
